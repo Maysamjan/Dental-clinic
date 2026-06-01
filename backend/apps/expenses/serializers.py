@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.core.validators import positive
 from .models import Expense, ExpenseCategory
 
 
@@ -19,3 +20,6 @@ class ExpenseSerializer(serializers.ModelSerializer):
             "date", "description", "recorded_by", "created_at",
         ]
         read_only_fields = ["recorded_by"]
+
+    def validate_amount(self, value):
+        return positive(value, "Amount")

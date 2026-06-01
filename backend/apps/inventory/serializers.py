@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.core.validators import positive
 from .models import Supplier, InventoryItem, InventoryTransaction
 
 
@@ -31,3 +32,17 @@ class InventoryTransactionSerializer(serializers.ModelSerializer):
             "reason", "supplier", "treatment", "created_by", "created_at",
         ]
         read_only_fields = ["created_by"]
+
+    def validate_quantity(self, value):
+        return positive(value, "Quantity")
+
+    def validate(self, attrs):
+        # Prevent stocking out more than is available.
+        if attrs.get("type") == "OUT":
+            item = attrs.get("item")
+            qty = attrs.get("quantity")
+            if item and qty and qty > item.quantity:
+                raise serializers.ValidationError(
+                    {"quantity": f"Only {item.quantity} {item.unit} of {item.name} in stock."}
+                )
+        return attrs

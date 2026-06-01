@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
 import { useUI, isRTL } from "@/stores/ui";
+import { useToast, apiError } from "@/stores/toast";
 import Toaster from "@/components/Toaster";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -9,6 +10,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     () =>
       new QueryClient({
         defaultOptions: { queries: { staleTime: 15000, retry: 1 } },
+        // Surface background data-fetch failures (other than auth) as toasts.
+        queryCache: new QueryCache({
+          onError: (error: any) => {
+            if (error?.response?.status === 401) return;
+            useToast.getState().push("error", apiError(error));
+          },
+        }),
       })
   );
   const { theme, locale } = useUI();

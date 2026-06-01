@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.core.validators import non_negative, positive_quantity
 from .models import (
     Invoice, InvoiceItem, Payment, InstallmentPlan, Installment,
 )
@@ -13,6 +14,12 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
             "unit_price", "line_total",
         ]
         read_only_fields = ["line_total"]
+
+    def validate_quantity(self, value):
+        return positive_quantity(value)
+
+    def validate_unit_price(self, value):
+        return non_negative(value, "Unit price")
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -31,6 +38,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "number", "subtotal", "total", "paid_amount", "balance", "status",
         ]
+
+    def validate_discount(self, value):
+        return non_negative(value, "Discount")
+
+    def validate_tax(self, value):
+        return non_negative(value, "Tax")
 
     def create(self, validated_data):
         items = validated_data.pop("items", [])

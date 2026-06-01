@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.core.validators import not_future_date
 from .models import Patient
 
 
@@ -16,6 +17,14 @@ class PatientSerializer(serializers.ModelSerializer):
             "is_archived", "created_at", "updated_at",
         ]
         read_only_fields = ["code", "created_at", "updated_at"]
+
+    def validate_date_of_birth(self, value):
+        return not_future_date(value, "Date of birth")
+
+    def validate_full_name(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("Full name is required.")
+        return value.strip()
 
 
 class PatientListSerializer(serializers.ModelSerializer):

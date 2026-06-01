@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.core.validators import non_negative, positive_quantity
 from .models import TreatmentCatalog, TreatmentPlan, TreatmentStage, Treatment
 
 
@@ -21,6 +22,12 @@ class TreatmentSerializer(serializers.ModelSerializer):
             "tooth_number", "description", "quantity", "unit_price", "total",
             "status", "clinical_notes", "performed_at", "created_at",
         ]
+
+    def validate_quantity(self, value):
+        return positive_quantity(value)
+
+    def validate_unit_price(self, value):
+        return non_negative(value, "Unit price")
 
 
 class TreatmentStageSerializer(serializers.ModelSerializer):
