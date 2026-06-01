@@ -45,30 +45,61 @@ class PatientViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="history")
     def history(self, request, pk=None):
         """Aggregated clinical & financial history for the patient."""
+        from decimal import Decimal
+
+        from django.db.models import Sum
+
         patient = self.get_object()
         from apps.visits.models import Visit
         from apps.prescriptions.models import Prescription
-        from apps.billing.models import Invoice
+        from apps.billing.models import Invoice, Payment
         from apps.appointments.models import Appointment
+        from apps.treatments.models import TreatmentPlan
+        from apps.documents.models import Document
+        from apps.followups.models import FollowUp
 
         from apps.visits.serializers import VisitSerializer
         from apps.prescriptions.serializers import PrescriptionSerializer
-        from apps.billing.serializers import InvoiceSerializer
+        from apps.billing.serializers import InvoiceSerializer, PaymentSerializer
         from apps.appointments.serializers import AppointmentSerializer
+        from apps.treatments.serializers import TreatmentPlanSerializer
+        from apps.documents.serializers import DocumentSerializer
+        from apps.followups.serializers import FollowUpSerializer
+
+        ctx = self.get_serializer_context()
+        zero = Decimal("0.00")
+        invoices = Invoice.objects.filter(patient=patient)
+        payments = Payment.objects.filter(invoice__patient=patient).select_related("invoice")
+
+        totals = invoices.aggregate(billed=Sum("total"), paid=Sum("paid_amount"),
+                                    balance=Sum("balance"))
 
         data = {
-            "patient": PatientSerializer(patient, context=self.get_serializer_context()).data,
+            "patient": PatientSerializer(patient, context=ctx).data,
+            "financial_summary": {
+                "total_billed": totals["billed"] or zero,
+                "total_paid": totals["paid"] or zero,
+                "outstanding_balance": totals["balance"] or zero,
+            },
             "appointments": AppointmentSerializer(
-                Appointment.objects.filter(patient=patient)[:50], many=True
+                Appointment.objects.filter(patient=patient).select_related("doctor__user")[:50], many=True
             ).data,
             "visits": VisitSerializer(
-                Visit.objects.filter(patient=patient)[:50], many=True
+                Visit.objects.filter(patient=patient).select_related("doctor__user")[:50], many=True
+            ).data,
+            "treatment_plans": TreatmentPlanSerializer(
+                TreatmentPlan.objects.filter(patient=patient).prefetch_related("stages__treatments")[:50], many=True
             ).data,
             "prescriptions": PrescriptionSerializer(
-                Prescription.objects.filter(patient=patient)[:50], many=True
+                Prescription.objects.filter(patient=patient).prefetch_related("items")[:50], many=True
             ).data,
-            "invoices": InvoiceSerializer(
-                Invoice.objects.filter(patient=patient)[:50], many=True
+            "invoices": InvoiceSerializer(invoices.prefetch_related("items", "payments")[:50], many=True).data,
+            "payments": PaymentSerializer(payments[:50], many=True).data,
+            "documents": DocumentSerializer(
+                Document.objects.filter(patient=patient)[:50], many=True, context=ctx
+            ).data,
+            "follow_ups": FollowUpSerializer(
+                FollowUp.objects.filter(patient=patient)[:50], many=True
             ).data,
         }
         return Response(data)
