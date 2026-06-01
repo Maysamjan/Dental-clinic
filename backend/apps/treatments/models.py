@@ -41,9 +41,30 @@ class TreatmentPlan(TimeStampedModel):
     title = models.CharField(max_length=150)
     status = models.CharField(max_length=10, choices=STATUS, default="DRAFT")
     progress_percent = models.PositiveSmallIntegerField(default=0)
+    estimated_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     def __str__(self):
         return f"{self.title} ({self.patient.full_name})"
+
+    @property
+    def actual_cost(self):
+        """Total value of completed treatments in this plan."""
+        from decimal import Decimal
+
+        total = Decimal("0")
+        for t in Treatment.objects.filter(stage__plan=self, status="COMPLETED"):
+            total += t.total
+        return total
+
+    @property
+    def planned_cost(self):
+        """Total value of all treatments in this plan."""
+        from decimal import Decimal
+
+        total = Decimal("0")
+        for t in Treatment.objects.filter(stage__plan=self):
+            total += t.total
+        return total
 
     def recompute_progress(self):
         treatments = Treatment.objects.filter(stage__plan=self)

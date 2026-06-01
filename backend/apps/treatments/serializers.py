@@ -35,11 +35,14 @@ class TreatmentPlanSerializer(serializers.ModelSerializer):
     stages = TreatmentStageSerializer(many=True, read_only=True)
     patient_name = serializers.CharField(source="patient.full_name", read_only=True)
     doctor_name = serializers.CharField(source="doctor.user.full_name", read_only=True)
+    actual_cost = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
+    planned_cost = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
 
     class Meta:
         model = TreatmentPlan
         fields = [
             "id", "patient", "patient_name", "doctor", "doctor_name",
-            "title", "status", "progress_percent", "stages", "created_at",
+            "title", "status", "progress_percent", "estimated_cost",
+            "actual_cost", "planned_cost", "stages", "created_at",
         ]
         read_only_fields = ["progress_percent"]
