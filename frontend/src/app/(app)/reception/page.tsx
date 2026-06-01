@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useList, rowsOf } from "@/lib/hooks";
@@ -103,15 +104,18 @@ export default function ReceptionPage() {
               {v.medical_summary && (
                 <div className="mt-2 rounded-lg bg-red-50 px-2 py-1 text-xs text-red-700">⚠ {v.medical_summary}</div>
               )}
-              {NEXT[v.workflow_status] && (
-                <button
-                  className="btn-primary mt-3 w-full"
-                  disabled={advance.isPending}
-                  onClick={() => advance.mutate({ id: v.id, status: NEXT[v.workflow_status] })}
-                >
-                  → {STATUS_LABEL[NEXT[v.workflow_status]]}
-                </button>
-              )}
+              <div className="mt-3 flex gap-2">
+                <Link href={`/visits/${v.id}`} className="btn-ghost flex-1">Open</Link>
+                {NEXT[v.workflow_status] && (
+                  <button
+                    className="btn-primary flex-1"
+                    disabled={advance.isPending}
+                    onClick={() => advance.mutate({ id: v.id, status: NEXT[v.workflow_status] })}
+                  >
+                    → {STATUS_LABEL[NEXT[v.workflow_status]]}
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
