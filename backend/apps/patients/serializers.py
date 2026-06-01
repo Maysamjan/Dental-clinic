@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from apps.core.validators import not_future_date
+from django.conf import settings
+
+from apps.core.validators import not_future_date, validate_upload
 from .models import Patient
 
 
@@ -25,6 +27,9 @@ class PatientSerializer(serializers.ModelSerializer):
         if not value or not value.strip():
             raise serializers.ValidationError("Full name is required.")
         return value.strip()
+
+    def validate_photo(self, value):
+        return validate_upload(value, settings.ALLOWED_IMAGE_EXTENSIONS, max_mb=10)
 
 
 class PatientListSerializer(serializers.ModelSerializer):

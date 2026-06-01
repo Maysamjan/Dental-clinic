@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -22,17 +24,24 @@ def client_ip(request):
 
 
 class LoginView(TokenObtainPairView):
-    """JWT login that records a session and an audit entry."""
+    """JWT login (rate-limited) that records sessions and audits attempts."""
 
     serializer_class = ClinicTokenObtainPairSerializer
+    throttle_scope = "login"
+    throttle_classes = [ScopedRateThrottle]
 
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+        username = request.data.get("username")
+        ip = client_ip(request)
+        try:
+            response = super().post(request, *args, **kwargs)
+        except Exception:
+            log_activity(None, "LOGIN", "User", "", f"Failed login for '{username}'", ip)
+            raise
+
         if response.status_code == 200:
-            username = request.data.get("username")
             user = User.objects.filter(username=username).first()
             if user:
-                ip = client_ip(request)
                 user.last_login_ip = ip
                 user.save(update_fields=["last_login_ip"])
                 UserSession.objects.create(
@@ -41,6 +50,8 @@ class LoginView(TokenObtainPairView):
                     user_agent=request.META.get("HTTP_USER_AGENT", "")[:300],
                 )
                 log_activity(user, "LOGIN", "User", user.id, "User logged in", ip)
+        else:
+            log_activity(None, "LOGIN", "User", "", f"Failed login for '{username}'", ip)
         return response
 
 
@@ -53,7 +64,7 @@ class MeViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["post"])
     def logout(self, request):
         UserSession.objects.filter(user=request.user, is_active=True).update(
-            is_active=False
+            is_active=False, logout_at=timezone.now()
         )
         log_activity(request.user, "LOGOUT", "User", request.user.id, "User logged out")
         return Response(status=status.HTTP_204_NO_CONTENT)

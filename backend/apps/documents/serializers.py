@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.core.validators import validate_upload
 from .models import Document
 
 
@@ -14,6 +15,9 @@ class DocumentSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["uploaded_by"]
         extra_kwargs = {"file": {"write_only": True}}
+
+    def validate_file(self, value):
+        return validate_upload(value)
 
     def get_file_url(self, obj):
         request = self.context.get("request")

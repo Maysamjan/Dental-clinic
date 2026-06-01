@@ -138,7 +138,28 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "apps.core.exceptions.exception_handler",
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "3000/hour",
+        "anon": "120/hour",
+        "login": "10/min",
+    },
 }
+
+# Cache backend (also backs DRF throttling counters).
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
+# File upload constraints.
+MAX_UPLOAD_SIZE_MB = 25
+ALLOWED_IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"]
+ALLOWED_DOCUMENT_EXTENSIONS = ALLOWED_IMAGE_EXTENSIONS + ["pdf", "dcm", "tiff", "bmp"]
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Dental Clinic Management API",
