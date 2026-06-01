@@ -9,6 +9,7 @@ import { useT } from "@/i18n/useT";
 import { useAuth } from "@/stores/auth";
 import { hasPerm } from "@/lib/permissions";
 import { useToast, apiError } from "@/stores/toast";
+import { TREATMENT_STATUS_FA } from "@/lib/labels";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import ResourceCombo from "@/components/ResourceCombo";
@@ -31,7 +32,7 @@ export default function TreatmentsPage() {
   const create = useMutation({
     mutationFn: () => api.post("/treatment-plans/", { ...form, status: "ACTIVE" }),
     onSuccess: (res) => {
-      toast("success", "Treatment plan created.");
+      toast("success", "پلان تداوی ایجاد شد.");
       qc.invalidateQueries({ queryKey: ["treatment-plans"] });
       setOpen(false);
       router.push(`/treatments/${res.data.id}`);
@@ -43,22 +44,22 @@ export default function TreatmentsPage() {
     <div>
       <PageHeader
         title={t("treatments")}
-        subtitle="Treatment plans & progress"
-        action={canAdd ? <button className="btn-primary" onClick={() => setOpen(true)}>+ New Plan</button> : null}
+        subtitle="پلان‌های تداوی و پیشرفت"
+        action={canAdd ? <button className="btn-primary" onClick={() => setOpen(true)}>+ پلان جدید</button> : null}
       />
 
       <div className="card overflow-x-auto p-0">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-700/50">
-            <tr>{["Plan", "Patient", "Status", "Progress", "Est. Cost", ""].map((h) => <th key={h} className="px-4 py-2 text-start font-medium">{h}</th>)}</tr>
+            <tr>{["پلان", "بیمار", "وضعیت", "پیشرفت", "هزینه تخمینی", ""].map((h) => <th key={h} className="px-4 py-2 text-start font-medium">{h}</th>)}</tr>
           </thead>
           <tbody>
-            {plans.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-slate-400">No treatment plans.</td></tr>}
+            {plans.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-slate-400">پلان تداوی وجود ندارد.</td></tr>}
             {plans.map((p) => (
               <tr key={p.id} className="border-t border-slate-100 dark:border-slate-700">
                 <td className="px-4 py-2"><Link className="text-brand-600 hover:underline" href={`/treatments/${p.id}`}>{p.title}</Link></td>
                 <td className="px-4 py-2">{p.patient_name}</td>
-                <td className="px-4 py-2">{p.status}</td>
+                <td className="px-4 py-2">{TREATMENT_STATUS_FA[p.status] ?? p.status}</td>
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-2">
                     <div className="h-2 w-24 rounded-full bg-slate-200"><div className="h-2 rounded-full bg-brand-500" style={{ width: `${p.progress_percent}%` }} /></div>
@@ -66,32 +67,32 @@ export default function TreatmentsPage() {
                   </div>
                 </td>
                 <td className="px-4 py-2">{Number(p.estimated_cost).toLocaleString()}</td>
-                <td className="px-4 py-2"><Link className="text-brand-600 hover:underline" href={`/treatments/${p.id}`}>Open →</Link></td>
+                <td className="px-4 py-2"><Link className="text-brand-600 hover:underline" href={`/treatments/${p.id}`}>باز کردن →</Link></td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <Modal open={open} title="New Treatment Plan" onClose={() => setOpen(false)}>
+      <Modal open={open} title="پلان تداوی جدید" onClose={() => setOpen(false)}>
         <form onSubmit={(e) => { e.preventDefault(); create.mutate(); }} className="space-y-3">
           <div>
-            <label className="label">Patient</label>
+            <label className="label">بیمار</label>
             <ResourceCombo resource="patients" value={form.patient} onChange={(id) => setForm({ ...form, patient: id })}
-              getLabel={(r) => `${r.code} — ${r.full_name}`} placeholder="Search patient…" />
+              getLabel={(r) => `${r.code} — ${r.full_name}`} placeholder="جستجوی بیمار…" />
           </div>
           <div>
-            <label className="label">Doctor</label>
+            <label className="label">داکتر</label>
             <ResourceCombo resource="doctors" value={form.doctor} onChange={(id) => setForm({ ...form, doctor: id })}
-              getLabel={(r) => r.name || `Doctor #${r.id}`} placeholder="Select doctor…" />
+              getLabel={(r) => r.name || `داکتر #${r.id}`} placeholder="انتخاب داکتر…" />
           </div>
           <div>
-            <label className="label">Title</label>
-            <input className="input" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Full-mouth rehabilitation" />
+            <label className="label">عنوان</label>
+            <input className="input" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="مثلاً بازسازی کامل دهان" />
           </div>
           <div className="flex justify-end gap-2 pt-1">
-            <button type="button" className="btn-ghost" onClick={() => setOpen(false)}>Cancel</button>
-            <button className="btn-primary" disabled={create.isPending || !form.patient || !form.title}>Create</button>
+            <button type="button" className="btn-ghost" onClick={() => setOpen(false)}>انصراف</button>
+            <button className="btn-primary" disabled={create.isPending || !form.patient || !form.title}>ایجاد</button>
           </div>
         </form>
       </Modal>

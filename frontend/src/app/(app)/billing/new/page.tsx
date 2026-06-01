@@ -5,7 +5,7 @@ import InvoiceBuilder from "@/components/InvoiceBuilder";
 export default function NewInvoicePage() {
   return (
     <div>
-      <PageHeader title="New Invoice" subtitle="Build an invoice from line items" />
+      <PageHeader title="صورتحساب جدید" subtitle="ساخت صورتحساب از اقلام" />
       <InvoiceBuilder />
     </div>
   );

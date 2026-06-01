@@ -7,6 +7,7 @@ import { useT } from "@/i18n/useT";
 import { useAuth } from "@/stores/auth";
 import { hasPerm } from "@/lib/permissions";
 import { useToast, apiError } from "@/stores/toast";
+import { APPT_STATUS_FA } from "@/lib/labels";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import ResourceCombo from "@/components/ResourceCombo";
@@ -58,7 +59,7 @@ export default function AppointmentsPage() {
         reason: form.reason,
       }),
     onSuccess: () => {
-      toast("success", "Appointment scheduled.");
+      toast("success", "نوبت ثبت شد.");
       invalidate();
       setOpen(false);
       setForm({ patient: null, doctor: null, start: "", reason: "" });
@@ -70,7 +71,7 @@ export default function AppointmentsPage() {
     mutationFn: ({ id, action }: { id: number; action: string }) =>
       api.post(`/appointments/${id}/${action}/`),
     onSuccess: (_d, v) => {
-      toast("success", v.action === "arrive" ? "Patient sent to queue." : "Updated.");
+      toast("success", v.action === "arrive" ? "بیمار به صف فرستاده شد." : "بروزرسانی شد.");
       invalidate();
     },
     onError: (e) => toast("error", apiError(e)),
@@ -80,18 +81,18 @@ export default function AppointmentsPage() {
     <div>
       <PageHeader
         title={t("appointments")}
-        subtitle="Daily schedule"
+        subtitle="برنامه روزانه"
         action={
           canManage ? (
             <button className="btn-primary" onClick={() => setOpen(true)}>
-              + New Appointment
+              + نوبت جدید
             </button>
           ) : null
         }
       />
 
       <div className="mb-4 flex items-center gap-2">
-        <label className="label mb-0">Date</label>
+        <label className="label mb-0">{t("date")}</label>
         <input type="date" className="input w-auto" value={day} onChange={(e) => setDay(e.target.value)} />
       </div>
 
@@ -99,17 +100,17 @@ export default function AppointmentsPage() {
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-700/50">
             <tr>
-              {["Time", "Patient", "Doctor", "Reason", "Status", ""].map((h) => (
-                <th key={h} className="px-4 py-2 text-start font-medium">{h}</th>
+              {[t("time"), t("patient"), t("doctor"), t("reason"), t("status"), ""].map((h, i) => (
+                <th key={i} className="px-4 py-2 text-start font-medium">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={6} className="p-6 text-center text-slate-400">Loading…</td></tr>
+              <tr><td colSpan={6} className="p-6 text-center text-slate-400">در حال بارگذاری…</td></tr>
             )}
             {!isLoading && rows.length === 0 && (
-              <tr><td colSpan={6} className="p-6 text-center text-slate-400">No appointments for this day.</td></tr>
+              <tr><td colSpan={6} className="p-6 text-center text-slate-400">برای این روز نوبتی ثبت نشده است.</td></tr>
             )}
             {rows.map((a) => (
               <tr key={a.id} className="border-t border-slate-100 dark:border-slate-700">
@@ -117,21 +118,21 @@ export default function AppointmentsPage() {
                 <td className="px-4 py-2">{a.patient_name}</td>
                 <td className="px-4 py-2">{a.doctor_name || "—"}</td>
                 <td className="px-4 py-2">{a.reason || "—"}</td>
-                <td className="px-4 py-2"><span className={`badge ${STATUS[a.status]}`}>{a.status}</span></td>
+                <td className="px-4 py-2"><span className={`badge ${STATUS[a.status]}`}>{APPT_STATUS_FA[a.status] ?? a.status}</span></td>
                 <td className="px-4 py-2">
                   {canManage && (
                     <div className="flex gap-1">
                       {["SCHEDULED"].includes(a.status) && (
-                        <button className="btn-ghost px-2 py-1 text-xs" onClick={() => act.mutate({ id: a.id, action: "confirm" })}>Confirm</button>
+                        <button className="btn-ghost px-2 py-1 text-xs" onClick={() => act.mutate({ id: a.id, action: "confirm" })}>تأیید</button>
                       )}
                       {["SCHEDULED", "CONFIRMED"].includes(a.status) && (
-                        <button className="btn-primary px-2 py-1 text-xs" onClick={() => act.mutate({ id: a.id, action: "arrive" })}>Arrive</button>
+                        <button className="btn-primary px-2 py-1 text-xs" onClick={() => act.mutate({ id: a.id, action: "arrive" })}>حاضر شد</button>
                       )}
                       {["SCHEDULED", "CONFIRMED"].includes(a.status) && (
-                        <button className="btn-ghost px-2 py-1 text-xs" onClick={() => act.mutate({ id: a.id, action: "no-show" })}>No-Show</button>
+                        <button className="btn-ghost px-2 py-1 text-xs" onClick={() => act.mutate({ id: a.id, action: "no-show" })}>غایب</button>
                       )}
                       {!["CANCELLED", "COMPLETED"].includes(a.status) && (
-                        <button className="btn-ghost px-2 py-1 text-xs text-red-600" onClick={() => act.mutate({ id: a.id, action: "cancel" })}>Cancel</button>
+                        <button className="btn-ghost px-2 py-1 text-xs text-red-600" onClick={() => act.mutate({ id: a.id, action: "cancel" })}>لغو</button>
                       )}
                     </div>
                   )}
@@ -142,33 +143,33 @@ export default function AppointmentsPage() {
         </table>
       </div>
 
-      <Modal open={open} title="New Appointment" onClose={() => setOpen(false)}>
+      <Modal open={open} title="نوبت جدید" onClose={() => setOpen(false)}>
         <form
           onSubmit={(e) => { e.preventDefault(); create.mutate(); }}
           className="space-y-3"
         >
           <div>
-            <label className="label">Patient</label>
+            <label className="label">{t("patient")}</label>
             <ResourceCombo
               resource="patients"
               value={form.patient}
               onChange={(id) => setForm({ ...form, patient: id })}
               getLabel={(r) => `${r.code} — ${r.full_name}`}
-              placeholder="Search patient…"
+              placeholder="جستجوی بیمار…"
             />
           </div>
           <div>
-            <label className="label">Doctor</label>
+            <label className="label">{t("doctor")}</label>
             <ResourceCombo
               resource="doctors"
               value={form.doctor}
               onChange={(id) => setForm({ ...form, doctor: id })}
-              getLabel={(r) => r.name || `Doctor #${r.id}`}
-              placeholder="Select doctor…"
+              getLabel={(r) => r.name || `داکتر #${r.id}`}
+              placeholder="انتخاب داکتر…"
             />
           </div>
           <div>
-            <label className="label">Date &amp; Time</label>
+            <label className="label">تاریخ و زمان</label>
             <input
               type="datetime-local"
               className="input"
@@ -178,7 +179,7 @@ export default function AppointmentsPage() {
             />
           </div>
           <div>
-            <label className="label">Reason</label>
+            <label className="label">{t("reason")}</label>
             <input className="input" value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} />
           </div>
           <div className="flex justify-end gap-2 pt-2">

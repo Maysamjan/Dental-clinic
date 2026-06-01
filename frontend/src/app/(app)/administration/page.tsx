@@ -3,12 +3,13 @@ import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import ResourceTable from "@/components/ResourceTable";
 import { useT } from "@/i18n/useT";
+import { ROLE_FA, ACTION_FA } from "@/lib/labels";
 
 const TABS = [
-  ["users", "Users", "users"],
-  ["roles", "Roles", "roles"],
-  ["sessions", "Sessions", "sessions"],
-  ["activity-logs", "Activity Logs", "activity-logs"],
+  ["users", "کاربران", "users"],
+  ["roles", "نقش‌ها", "roles"],
+  ["sessions", "نشست‌ها", "sessions"],
+  ["activity-logs", "گزارش فعالیت‌ها", "activity-logs"],
 ] as const;
 
 export default function AdministrationPage() {
@@ -17,7 +18,7 @@ export default function AdministrationPage() {
 
   return (
     <div>
-      <PageHeader title={t("administration")} subtitle="Users · Roles · Security · Audit" />
+      <PageHeader title={t("administration")} subtitle="کاربران · نقش‌ها · امنیت · حسابرسی" />
 
       <div className="mb-4 flex gap-2">
         {TABS.map(([key, label]) => (
@@ -35,10 +36,10 @@ export default function AdministrationPage() {
         <ResourceTable
           resource="users"
           columns={[
-            { key: "username", label: "Username" },
-            { key: "full_name", label: "Name" },
-            { key: "role_name", label: "Role" },
-            { key: "is_active", label: "Active", render: (r) => (r.is_active ? "Yes" : "No") },
+            { key: "username", label: "نام کاربری" },
+            { key: "full_name", label: "نام" },
+            { key: "role_name", label: "نقش", render: (r) => ROLE_FA[r.role_code] ?? r.role_name },
+            { key: "is_active", label: "فعال", render: (r) => (r.is_active ? "بله" : "خیر") },
           ]}
         />
       )}
@@ -47,12 +48,12 @@ export default function AdministrationPage() {
           resource="roles"
           searchable={false}
           columns={[
-            { key: "name", label: "Role" },
-            { key: "code", label: "Code" },
+            { key: "name", label: "نقش", render: (r) => ROLE_FA[r.code] ?? r.name },
+            { key: "code", label: "کد" },
             {
               key: "permissions",
-              label: "Permissions",
-              render: (r) => <span className="text-xs text-slate-400">{r.permissions.length} codes</span>,
+              label: "دسترسی‌ها",
+              render: (r) => <span className="text-xs text-slate-400">{r.permissions.length} مورد</span>,
             },
           ]}
         />
@@ -62,10 +63,10 @@ export default function AdministrationPage() {
           resource="sessions"
           searchable={false}
           columns={[
-            { key: "username", label: "User" },
-            { key: "ip_address", label: "IP" },
-            { key: "login_at", label: "Login", render: (r) => new Date(r.login_at).toLocaleString() },
-            { key: "is_active", label: "Active", render: (r) => (r.is_active ? "Yes" : "No") },
+            { key: "username", label: "کاربر" },
+            { key: "ip_address", label: "آی‌پی" },
+            { key: "login_at", label: "ورود", render: (r) => new Date(r.login_at).toLocaleString() },
+            { key: "is_active", label: "فعال", render: (r) => (r.is_active ? "بله" : "خیر") },
           ]}
         />
       )}
@@ -73,10 +74,10 @@ export default function AdministrationPage() {
         <ResourceTable
           resource="activity-logs"
           columns={[
-            { key: "username", label: "User" },
-            { key: "action", label: "Action" },
-            { key: "summary", label: "Summary" },
-            { key: "created_at", label: "When", render: (r) => new Date(r.created_at).toLocaleString() },
+            { key: "username", label: "کاربر" },
+            { key: "action", label: "عملیات", render: (r) => ACTION_FA[r.action] ?? r.action },
+            { key: "summary", label: "شرح" },
+            { key: "created_at", label: "زمان", render: (r) => new Date(r.created_at).toLocaleString() },
           ]}
         />
       )}

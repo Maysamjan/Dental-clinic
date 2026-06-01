@@ -6,16 +6,16 @@ import { useT } from "@/i18n/useT";
 import PageHeader from "@/components/PageHeader";
 
 const REPORTS = [
-  ["revenue", "Revenue"],
-  ["payments", "Payments"],
-  ["outstanding", "Outstanding Balances"],
-  ["expenses", "Expenses"],
-  ["profit-loss", "Profit & Loss"],
-  ["doctor-performance", "Doctor Performance"],
-  ["treatments", "Treatments"],
-  ["current-stock", "Current Stock"],
-  ["low-stock", "Low Stock"],
-  ["inventory-movement", "Inventory Movement"],
+  ["revenue", "درآمد"],
+  ["payments", "پرداخت‌ها"],
+  ["outstanding", "مانده‌های معوق"],
+  ["expenses", "مصارف"],
+  ["profit-loss", "سود و زیان"],
+  ["doctor-performance", "کارکرد داکتران"],
+  ["treatments", "تداوی‌ها"],
+  ["current-stock", "موجودی فعلی"],
+  ["low-stock", "کمبود موجودی"],
+  ["inventory-movement", "گردش انبار"],
 ];
 
 export default function ReportsPage() {
@@ -38,11 +38,11 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <PageHeader title={t("reports")} subtitle="Clinical · Financial · Inventory" />
+      <PageHeader title={t("reports")} subtitle="کلینیکی · مالی · انبار" />
 
       <div className="mb-4 flex flex-wrap items-end gap-3">
         <div>
-          <label className="label">Report</label>
+          <label className="label">گزارش</label>
           <select className="input w-auto" value={report} onChange={(e) => setReport(e.target.value)}>
             {REPORTS.map(([k, l]) => (
               <option key={k} value={k}>
@@ -52,18 +52,18 @@ export default function ReportsPage() {
           </select>
         </div>
         <div>
-          <label className="label">From</label>
+          <label className="label">از تاریخ</label>
           <input type="date" className="input" value={from} onChange={(e) => setFrom(e.target.value)} />
         </div>
         <div>
-          <label className="label">To</label>
+          <label className="label">تا تاریخ</label>
           <input type="date" className="input" value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
         <a className="btn-ghost" href={exportUrl("pdf")} target="_blank" rel="noreferrer">
-          Export PDF
+          خروجی PDF
         </a>
         <a className="btn-ghost" href={exportUrl("excel")} target="_blank" rel="noreferrer">
-          Export Excel
+          خروجی اکسل
         </a>
       </div>
 

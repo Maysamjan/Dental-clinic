@@ -9,7 +9,7 @@ function List({ title, items }: { title: string; items?: any[] }) {
     <div className="card">
       <h2 className="mb-2 font-semibold">{title}</h2>
       {!items || items.length === 0 ? (
-        <p className="text-sm text-slate-400">Nothing here.</p>
+        <p className="text-sm text-slate-400">موردی نیست.</p>
       ) : (
         <ul className="divide-y divide-slate-100 text-sm dark:divide-slate-700">
           {items.map((f) => (
@@ -32,11 +32,11 @@ export default function FollowUpsPage() {
   });
   return (
     <div>
-      <PageHeader title={t("followups")} subtitle="Internal reminders" />
+      <PageHeader title={t("followups")} subtitle="یادآوری‌های داخلی" />
       <div className="grid gap-4 md:grid-cols-3">
-        <List title="Due Today" items={data?.due_today} />
-        <List title="Due Tomorrow" items={data?.due_tomorrow} />
-        <List title="Payment Follow-Ups" items={data?.payment_followups} />
+        <List title="سررسید امروز" items={data?.due_today} />
+        <List title="سررسید فردا" items={data?.due_tomorrow} />
+        <List title="پیگیری پرداخت‌ها" items={data?.payment_followups} />
       </div>
     </div>
   );

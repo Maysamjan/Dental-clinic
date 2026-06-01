@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useWebSocket } from "@/lib/ws";
 import { useT } from "@/i18n/useT";
+import { ACTION_FA } from "@/lib/labels";
 import PageHeader from "@/components/PageHeader";
 import type { DashboardSummary } from "@/lib/types";
 
@@ -32,7 +33,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <PageHeader title={t("dashboard")} subtitle="Live clinic overview" />
+      <PageHeader title={t("dashboard")} subtitle="نمای کلی زنده کلینیک" />
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Stat label={t("total_patients")} value={data?.total_patients ?? "—"} />
@@ -64,7 +65,7 @@ export default function DashboardPage() {
             <li key={i} className="flex justify-between py-2">
               <span>
                 <span className="badge bg-brand-50 text-brand-700 me-2">
-                  {a.action}
+                  {ACTION_FA[a.action] ?? a.action}
                 </span>
                 {a.summary}
               </span>
@@ -74,7 +75,7 @@ export default function DashboardPage() {
             </li>
           ))}
           {(!data || data.recent_activities.length === 0) && (
-            <li className="py-2 text-slate-400">No recent activity.</li>
+            <li className="py-2 text-slate-400">فعالیتی ثبت نشده است.</li>
           )}
         </ul>
       </div>

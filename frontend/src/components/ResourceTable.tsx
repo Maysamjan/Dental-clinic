@@ -33,7 +33,7 @@ export default function ResourceTable({
         <div className="border-b border-slate-200 p-3 dark:border-slate-700">
           <input
             className="input max-w-xs"
-            placeholder="Search…"
+            placeholder="جستجو…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -54,21 +54,21 @@ export default function ResourceTable({
             {isLoading && (
               <tr>
                 <td colSpan={columns.length} className="p-6 text-center text-slate-400">
-                  Loading…
+                  در حال بارگذاری…
                 </td>
               </tr>
             )}
             {isError && (
               <tr>
                 <td colSpan={columns.length} className="p-6 text-center text-red-500">
-                  Failed to load data.
+                  بارگذاری اطلاعات ناموفق بود.
                 </td>
               </tr>
             )}
             {!isLoading && rows.length === 0 && (
               <tr>
                 <td colSpan={columns.length} className="p-6 text-center text-slate-400">
-                  No records.
+                  موردی یافت نشد.
                 </td>
               </tr>
             )}

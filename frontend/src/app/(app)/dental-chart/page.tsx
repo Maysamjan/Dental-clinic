@@ -8,15 +8,15 @@ import { useT } from "@/i18n/useT";
 import PageHeader from "@/components/PageHeader";
 
 const STATUSES = [
-  ["HEALTHY", "Healthy", "bg-white text-slate-700 border-slate-300"],
-  ["CARIES", "Caries", "bg-red-500 text-white"],
-  ["FILLING", "Filling", "bg-blue-500 text-white"],
-  ["ROOT_CANAL", "Root Canal", "bg-purple-500 text-white"],
-  ["CROWN", "Crown", "bg-amber-500 text-white"],
-  ["BRIDGE", "Bridge", "bg-pink-500 text-white"],
-  ["IMPLANT", "Implant", "bg-teal-600 text-white"],
-  ["EXTRACTION", "Extraction", "bg-slate-800 text-white"],
-  ["ORTHODONTIC", "Orthodontic", "bg-emerald-500 text-white"],
+  ["HEALTHY", "سالم", "bg-white text-slate-700 border-slate-300"],
+  ["CARIES", "پوسیدگی", "bg-red-500 text-white"],
+  ["FILLING", "ترمیم (پُرکردگی)", "bg-blue-500 text-white"],
+  ["ROOT_CANAL", "عصب‌کشی", "bg-purple-500 text-white"],
+  ["CROWN", "روکش", "bg-amber-500 text-white"],
+  ["BRIDGE", "بریج", "bg-pink-500 text-white"],
+  ["IMPLANT", "ایمپلنت", "bg-teal-600 text-white"],
+  ["EXTRACTION", "کشیدن دندان", "bg-slate-800 text-white"],
+  ["ORTHODONTIC", "ارتودنسی", "bg-emerald-500 text-white"],
 ] as const;
 
 const colorOf = (status: string) =>
@@ -69,7 +69,7 @@ function ChartInner() {
 
   return (
     <div>
-      <PageHeader title={t("dental_chart")} subtitle="FDI numbering · click a tooth to apply the selected condition" />
+      <PageHeader title={t("dental_chart")} subtitle="شماره‌گذاری FDI · برای ثبت وضعیت انتخاب‌شده روی دندان کلیک کنید" />
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <select className="input w-auto" value={patientId} onChange={(e) => setPatientId(e.target.value)}>
@@ -80,11 +80,11 @@ function ChartInner() {
           ))}
         </select>
         <span className="text-sm text-slate-400">
-          Dentition: {chart?.dentition === "CHILD" ? "Child (20)" : "Adult (32)"}
+          نوع دندان‌ها: {chart?.dentition === "CHILD" ? "شیری (۲۰)" : "دائمی (۳۲)"}
         </span>
       </div>
 
-      {/* Condition palette */}
+      {/* پالت وضعیت دندان */}
       <div className="mb-5 flex flex-wrap gap-2">
         {STATUSES.map(([code, label, cls]) => (
           <button
@@ -101,12 +101,12 @@ function ChartInner() {
 
       <div className="card space-y-4">
         <div>
-          <div className="mb-2 text-xs uppercase text-slate-400">Upper</div>
+          <div className="mb-2 text-xs uppercase text-slate-400">فک بالا</div>
           <div className="flex flex-wrap gap-1">{upper.map(Tooth)}</div>
         </div>
         <hr className="border-slate-200 dark:border-slate-700" />
         <div>
-          <div className="mb-2 text-xs uppercase text-slate-400">Lower</div>
+          <div className="mb-2 text-xs uppercase text-slate-400">فک پایین</div>
           <div className="flex flex-wrap gap-1">{lower.map(Tooth)}</div>
         </div>
       </div>

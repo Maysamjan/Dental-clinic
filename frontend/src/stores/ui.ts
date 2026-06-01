@@ -19,13 +19,14 @@ export const isRTL = (locale: Locale) => locale === "fa" || locale === "ps";
 export const useUI = create<UIState>()(
   persist(
     (set, get) => ({
-      locale: "en",
+      locale: "fa",
       theme: "light",
       sidebarOpen: true,
       setLocale: (locale) => set({ locale }),
       toggleTheme: () => set({ theme: get().theme === "light" ? "dark" : "light" }),
       toggleSidebar: () => set({ sidebarOpen: !get().sidebarOpen }),
     }),
-    { name: "dental-ui" }
+    // Bumped name forces existing clients onto the new Persian/RTL default.
+    { name: "dental-ui-fa" }
   )
 );

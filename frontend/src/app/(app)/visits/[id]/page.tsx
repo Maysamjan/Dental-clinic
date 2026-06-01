@@ -6,14 +6,15 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { rowsOf } from "@/lib/hooks";
 import { useToast, apiError } from "@/stores/toast";
+import { GENDER_FA } from "@/lib/labels";
 import PageHeader from "@/components/PageHeader";
 
 const STATUS_FLOW = ["WAITING", "IN_CONSULTATION", "TREATMENT_IN_PROGRESS", "COMPLETED"];
 const STATUS_LABEL: Record<string, string> = {
-  WAITING: "Waiting",
-  IN_CONSULTATION: "In Consultation",
-  TREATMENT_IN_PROGRESS: "Treatment In Progress",
-  COMPLETED: "Completed",
+  WAITING: "در انتظار",
+  IN_CONSULTATION: "در حال معاینه",
+  TREATMENT_IN_PROGRESS: "در حال تداوی",
+  COMPLETED: "تکمیل‌شده",
 };
 
 export default function ConsultationPage() {
@@ -60,16 +61,16 @@ export default function ConsultationPage() {
 
   const save = useMutation({
     mutationFn: () => api.patch(`/visits/${id}/`, form),
-    onSuccess: () => { toast("success", "Consultation saved."); setDirty(false); qc.invalidateQueries({ queryKey: ["visit", id] }); },
+    onSuccess: () => { toast("success", "معاینه ذخیره شد."); setDirty(false); qc.invalidateQueries({ queryKey: ["visit", id] }); },
     onError: (e) => toast("error", apiError(e)),
   });
   const advance = useMutation({
     mutationFn: (status: string) => api.post(`/visits/${id}/advance/`, { status }),
-    onSuccess: () => { toast("success", "Status updated."); qc.invalidateQueries({ queryKey: ["visit", id] }); },
+    onSuccess: () => { toast("success", "وضعیت بروزرسانی شد."); qc.invalidateQueries({ queryKey: ["visit", id] }); },
     onError: (e) => toast("error", apiError(e)),
   });
 
-  if (!visit) return <div className="text-slate-400">Loading consultation…</div>;
+  if (!visit) return <div className="text-slate-400">در حال بارگذاری…</div>;
 
   const idx = STATUS_FLOW.indexOf(visit.workflow_status);
   const next = idx >= 0 && idx < STATUS_FLOW.length - 1 ? STATUS_FLOW[idx + 1] : null;
@@ -89,8 +90,8 @@ export default function ConsultationPage() {
   return (
     <div>
       <PageHeader
-        title={`Consultation — ${visit.patient_name}`}
-        subtitle={`Visit #${visit.id} · ${visit.visit_date} · Queue #${visit.queue_number ?? "—"}`}
+        title={`معاینه — ${visit.patient_name}`}
+        subtitle={`ویزیت #${visit.id} · ${visit.visit_date} · نوبت #${visit.queue_number ?? "—"}`}
         action={
           <span className="badge bg-brand-50 text-brand-700">{STATUS_LABEL[visit.workflow_status]}</span>
         }
@@ -98,51 +99,51 @@ export default function ConsultationPage() {
 
       {patient?.allergies && (
         <div className="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-2 font-medium text-red-700">
-          ⚠ Allergies: {patient.allergies}
+          ⚠ حساسیت‌ها: {patient.allergies}
         </div>
       )}
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {/* Clinical notes */}
+        {/* یادداشت‌های کلینیکی */}
         <div className="card space-y-3 lg:col-span-2">
-          <h2 className="font-semibold">Clinical Record</h2>
-          {field("chief_complaint", "Chief Complaint", 2)}
-          {field("clinical_findings", "Clinical Findings")}
-          {field("diagnosis", "Diagnosis", 2)}
-          {field("notes", "Notes", 2)}
+          <h2 className="font-semibold">سابقه کلینیکی</h2>
+          {field("chief_complaint", "شکایت اصلی", 2)}
+          {field("clinical_findings", "یافته‌های کلینیکی")}
+          {field("diagnosis", "تشخیص", 2)}
+          {field("notes", "یادداشت‌ها", 2)}
           <div className="flex items-center justify-between">
             <button className="btn-primary" disabled={save.isPending || !dirty} onClick={() => save.mutate()}>
-              {dirty ? "Save Consultation" : "Saved"}
+              {dirty ? "ذخیره معاینه" : "ذخیره شد"}
             </button>
             {next && (
               <button className="btn-ghost" disabled={advance.isPending} onClick={() => advance.mutate(next)}>
-                Advance → {STATUS_LABEL[next]}
+                مرحله بعد → {STATUS_LABEL[next]}
               </button>
             )}
           </div>
         </div>
 
-        {/* Side panel: patient context + quick links */}
+        {/* پنل کناری: اطلاعات بیمار و میان‌برها */}
         <div className="space-y-4">
           <div className="card">
-            <h2 className="mb-2 font-semibold">Patient</h2>
+            <h2 className="mb-2 font-semibold">بیمار</h2>
             <div className="text-sm">
-              <div>{patient?.code} · {patient?.gender} · {patient?.age ?? "?"} yrs</div>
+              <div>{patient?.code} · {patient?.gender ? (GENDER_FA[patient.gender] ?? patient.gender) : ""} · {patient?.age ?? "?"} سال</div>
               <div className="text-slate-400">{patient?.phone}</div>
               {patient?.medical_history && (
-                <div className="mt-2 text-xs text-slate-500">History: {patient.medical_history}</div>
+                <div className="mt-2 text-xs text-slate-500">سوابق: {patient.medical_history}</div>
               )}
             </div>
             <div className="mt-3 flex flex-col gap-2">
-              <Link href={`/dental-chart?patient=${patientId}`} className="btn-ghost justify-start">🦷 Dental Chart</Link>
-              <Link href={`/patients/${patientId}`} className="btn-ghost justify-start">👤 Full Profile</Link>
+              <Link href={`/dental-chart?patient=${patientId}`} className="btn-ghost justify-start">🦷 نمودار دندان</Link>
+              <Link href={`/patients/${patientId}`} className="btn-ghost justify-start">👤 پروفایل کامل</Link>
             </div>
           </div>
 
           <div className="card">
-            <h2 className="mb-2 font-semibold">Treatment Plans</h2>
+            <h2 className="mb-2 font-semibold">پلان‌های تداوی</h2>
             {rowsOf<any>(planData).length === 0 ? (
-              <p className="text-sm text-slate-400">None yet.</p>
+              <p className="text-sm text-slate-400">هنوز موردی نیست.</p>
             ) : (
               <ul className="text-sm">
                 {rowsOf<any>(planData).map((p) => (
@@ -156,9 +157,9 @@ export default function ConsultationPage() {
           </div>
 
           <div className="card">
-            <h2 className="mb-2 font-semibold">Prescriptions</h2>
+            <h2 className="mb-2 font-semibold">نسخه‌ها</h2>
             {rowsOf<any>(rxData).length === 0 ? (
-              <p className="text-sm text-slate-400">None yet.</p>
+              <p className="text-sm text-slate-400">هنوز موردی نیست.</p>
             ) : (
               <ul className="text-sm">
                 {rowsOf<any>(rxData).map((r) => (

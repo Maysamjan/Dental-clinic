@@ -21,7 +21,7 @@ export default function LoginPage() {
       await login(username, password);
       router.replace("/dashboard");
     } catch {
-      setError("Invalid username or password");
+      setError("نام کاربری یا رمز عبور اشتباه است");
     } finally {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ export default function LoginPage() {
           {loading ? "…" : t("login")}
         </button>
         <p className="mt-4 text-center text-xs text-slate-400">
-          Demo: admin / Passw0rd!
+          نمونه: admin / Passw0rd!
         </p>
       </form>
     </div>

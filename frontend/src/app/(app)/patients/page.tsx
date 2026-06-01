@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useT } from "@/i18n/useT";
 import { useAuth } from "@/stores/auth";
 import { hasPerm } from "@/lib/permissions";
+import { GENDER_FA } from "@/lib/labels";
 import PageHeader from "@/components/PageHeader";
 import ResourceTable from "@/components/ResourceTable";
 import Modal from "@/components/Modal";
@@ -54,23 +55,23 @@ export default function PatientsPage() {
       <ResourceTable
         resource="patients"
         columns={[
-          { key: "code", label: "ID" },
+          { key: "code", label: "شناسه" },
           {
             key: "full_name",
-            label: "Name",
+            label: t("name"),
             render: (r) => (
               <Link className="text-brand-600 hover:underline" href={`/patients/${r.id}`}>
                 {r.full_name}
               </Link>
             ),
           },
-          { key: "gender", label: "Gender" },
-          { key: "age", label: "Age" },
-          { key: "phone", label: "Phone" },
+          { key: "gender", label: t("gender"), render: (r) => GENDER_FA[r.gender] ?? r.gender },
+          { key: "age", label: t("age") },
+          { key: "phone", label: t("phone") },
         ]}
       />
 
-      <Modal open={open} title={`${t("add")} ${t("patients")}`} onClose={() => setOpen(false)}>
+      <Modal open={open} title="بیمار جدید" onClose={() => setOpen(false)}>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -79,7 +80,7 @@ export default function PatientsPage() {
           className="grid grid-cols-2 gap-3"
         >
           <div className="col-span-2">
-            <label className="label">Full Name</label>
+            <label className="label">نام کامل</label>
             <input
               className="input"
               required
@@ -88,19 +89,19 @@ export default function PatientsPage() {
             />
           </div>
           <div>
-            <label className="label">Gender</label>
+            <label className="label">{t("gender")}</label>
             <select
               className="input"
               value={form.gender}
               onChange={(e) => setForm({ ...form, gender: e.target.value })}
             >
-              <option value="M">Male</option>
-              <option value="F">Female</option>
-              <option value="O">Other</option>
+              <option value="M">مرد</option>
+              <option value="F">زن</option>
+              <option value="O">سایر</option>
             </select>
           </div>
           <div>
-            <label className="label">Date of Birth</label>
+            <label className="label">تاریخ تولد</label>
             <input
               type="date"
               className="input"
@@ -109,7 +110,7 @@ export default function PatientsPage() {
             />
           </div>
           <div className="col-span-2">
-            <label className="label">Phone</label>
+            <label className="label">{t("phone")}</label>
             <input
               className="input"
               value={form.phone}
@@ -117,7 +118,7 @@ export default function PatientsPage() {
             />
           </div>
           <div className="col-span-2">
-            <label className="label">Allergies</label>
+            <label className="label">حساسیت‌ها (الرژی)</label>
             <input
               className="input"
               value={form.allergies}

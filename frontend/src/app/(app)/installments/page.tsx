@@ -13,10 +13,10 @@ export default function InstallmentsPage() {
         searchable={false}
         columns={[
           { key: "id", label: "#" },
-          { key: "due_date", label: "Due Date" },
-          { key: "amount", label: "Amount", render: (r) => Number(r.amount).toLocaleString() },
-          { key: "paid_amount", label: "Paid", render: (r) => Number(r.paid_amount).toLocaleString() },
-          { key: "status", label: "Status" },
+          { key: "due_date", label: "تاریخ سررسید" },
+          { key: "amount", label: "مبلغ", render: (r) => Number(r.amount).toLocaleString() },
+          { key: "paid_amount", label: "پرداختی", render: (r) => Number(r.paid_amount).toLocaleString() },
+          { key: "status", label: "وضعیت" },
         ]}
       />
     </div>

@@ -11,7 +11,7 @@ export default function ResourceCombo({
   value,
   onChange,
   getLabel,
-  placeholder = "Search…",
+  placeholder = "جستجو…",
   params = {},
 }: {
   resource: string;
@@ -59,7 +59,7 @@ export default function ResourceCombo({
           />
           <ul className="max-h-56 overflow-y-auto pb-2 text-sm">
             {rows.length === 0 && (
-              <li className="px-3 py-2 text-slate-400">No results.</li>
+              <li className="px-3 py-2 text-slate-400">موردی یافت نشد.</li>
             )}
             {rows.map((r) => (
               <li key={r.id}>

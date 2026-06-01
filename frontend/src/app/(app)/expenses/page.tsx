@@ -11,10 +11,10 @@ export default function ExpensesPage() {
       <ResourceTable
         resource="expenses"
         columns={[
-          { key: "date", label: "Date" },
-          { key: "category_name", label: "Category" },
-          { key: "description", label: "Description" },
-          { key: "amount", label: "Amount", render: (r) => Number(r.amount).toLocaleString() },
+          { key: "date", label: "تاریخ" },
+          { key: "category_name", label: "دسته‌بندی" },
+          { key: "description", label: "شرح" },
+          { key: "amount", label: "مبلغ", render: (r) => Number(r.amount).toLocaleString() },
         ]}
       />
     </div>

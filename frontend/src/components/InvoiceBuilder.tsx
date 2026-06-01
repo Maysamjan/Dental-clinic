@@ -47,7 +47,7 @@ export default function InvoiceBuilder({ initial }: { initial?: any }) {
         : api.post("/invoices/", payload);
     },
     onSuccess: (res) => {
-      toast("success", editing ? "Invoice updated." : `Invoice ${res.data.number} created.`);
+      toast("success", editing ? "صورتحساب بروزرسانی شد." : `صورتحساب ${res.data.number} ایجاد شد.`);
       qc.invalidateQueries({ queryKey: ["invoices"] });
       router.push(`/billing/${res.data.id}`);
     },
@@ -59,20 +59,20 @@ export default function InvoiceBuilder({ initial }: { initial?: any }) {
   return (
     <div className="space-y-4">
       <div className="card max-w-md">
-        <label className="label">Patient</label>
+        <label className="label">بیمار</label>
         <ResourceCombo resource="patients" value={patient} onChange={setPatient}
-          getLabel={(r) => `${r.code} — ${r.full_name}`} placeholder="Search patient…" />
+          getLabel={(r) => `${r.code} — ${r.full_name}`} placeholder="جستجوی بیمار…" />
       </div>
 
       <div className="card overflow-x-auto p-0">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-xs uppercase text-slate-500 dark:bg-slate-700/50">
-            <tr>{["Description", "Qty", "Unit Price", "Line Total", ""].map((h) => <th key={h} className="px-3 py-2 text-start font-medium">{h}</th>)}</tr>
+            <tr>{["شرح", "تعداد", "قیمت واحد", "جمع سطر", ""].map((h) => <th key={h} className="px-3 py-2 text-start font-medium">{h}</th>)}</tr>
           </thead>
           <tbody>
             {items.map((it, idx) => (
               <tr key={idx} className="border-t border-slate-100 dark:border-slate-700">
-                <td className="px-3 py-2"><input className="input" value={it.description} onChange={(e) => setItem(idx, { description: e.target.value })} placeholder="Treatment / item" /></td>
+                <td className="px-3 py-2"><input className="input" value={it.description} onChange={(e) => setItem(idx, { description: e.target.value })} placeholder="تداوی / قلم" /></td>
                 <td className="px-3 py-2 w-20"><input type="number" min={1} className="input" value={it.quantity} onChange={(e) => setItem(idx, { quantity: Number(e.target.value) })} /></td>
                 <td className="px-3 py-2 w-32"><input className="input" value={it.unit_price} onChange={(e) => setItem(idx, { unit_price: e.target.value })} /></td>
                 <td className="px-3 py-2 w-28">{(it.quantity * num(it.unit_price)).toLocaleString()}</td>
@@ -82,27 +82,27 @@ export default function InvoiceBuilder({ initial }: { initial?: any }) {
           </tbody>
         </table>
         <div className="p-3">
-          <button type="button" className="btn-ghost" onClick={() => setItems([...items, { description: "", quantity: 1, unit_price: "0" }])}>+ Add line</button>
+          <button type="button" className="btn-ghost" onClick={() => setItems([...items, { description: "", quantity: 1, unit_price: "0" }])}>+ افزودن سطر</button>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="card space-y-2">
-          <div><label className="label">Notes</label><input className="input" value={notes} onChange={(e) => setNotes(e.target.value)} /></div>
+          <div><label className="label">یادداشت‌ها</label><input className="input" value={notes} onChange={(e) => setNotes(e.target.value)} /></div>
         </div>
         <div className="card space-y-2">
-          <Row label="Subtotal" value={subtotal.toLocaleString()} />
-          <div className="flex items-center justify-between"><span>Discount</span><input className="input w-32 py-1 text-end" value={discount} onChange={(e) => setDiscount(e.target.value)} /></div>
-          <div className="flex items-center justify-between"><span>Tax</span><input className="input w-32 py-1 text-end" value={tax} onChange={(e) => setTax(e.target.value)} /></div>
+          <Row label="جمع جزء" value={subtotal.toLocaleString()} />
+          <div className="flex items-center justify-between"><span>تخفیف</span><input className="input w-32 py-1 text-end" value={discount} onChange={(e) => setDiscount(e.target.value)} /></div>
+          <div className="flex items-center justify-between"><span>مالیات</span><input className="input w-32 py-1 text-end" value={tax} onChange={(e) => setTax(e.target.value)} /></div>
           <hr className="border-slate-200 dark:border-slate-700" />
-          <Row label="Total" value={total.toLocaleString()} bold />
+          <Row label="مجموع کل" value={total.toLocaleString()} bold />
         </div>
       </div>
 
       <div className="flex justify-end gap-2">
-        <button className="btn-ghost" onClick={() => router.back()}>Cancel</button>
+        <button className="btn-ghost" onClick={() => router.back()}>انصراف</button>
         <button className="btn-primary" disabled={!valid || save.isPending} onClick={() => save.mutate()}>
-          {editing ? "Save Changes" : "Create Invoice"}
+          {editing ? "ذخیره تغییرات" : "ایجاد صورتحساب"}
         </button>
       </div>
     </div>
