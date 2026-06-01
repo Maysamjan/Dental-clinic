@@ -1,0 +1,29 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/stores/auth";
+import Sidebar from "@/components/Sidebar";
+import Topbar from "@/components/Topbar";
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const access = useAuth((s) => s.access);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!access) router.replace("/login");
+    else setReady(true);
+  }, [access, router]);
+
+  if (!ready) return null;
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Topbar />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+      </div>
+    </div>
+  );
+}
