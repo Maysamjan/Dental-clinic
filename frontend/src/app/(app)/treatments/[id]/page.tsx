@@ -81,7 +81,7 @@ export default function PlanDetailPage() {
         <EstimateCard value={plan.estimated_cost} onSave={(v) => saveEstimate.mutate(v)} editable={canEdit} />
         <div className="card">
           <div className="text-xs text-slate-400">برنامه‌ریزی‌شده / واقعی</div>
-          <div className="text-lg font-bold">{Number(plan.planned_cost).toLocaleString()} <span className="text-sm font-normal text-slate-400">/</span> <span className="text-brand-600">{Number(plan.actual_cost).toLocaleString()}</span></div>
+          <div className="text-lg font-bold">{Number(plan.planned_cost).toLocaleString('en-US')} <span className="text-sm font-normal text-slate-400">/</span> <span className="text-brand-600">{Number(plan.actual_cost).toLocaleString('en-US')}</span></div>
         </div>
       </div>
 
@@ -116,7 +116,7 @@ function EstimateCard({ value, onSave, editable }: { value: string; onSave: (v: 
           <input className="input py-1" value={v} onChange={(e) => setV(e.target.value)} onBlur={() => v !== value && onSave(v)} />
         </div>
       ) : (
-        <div className="text-lg font-bold">{Number(value).toLocaleString()}</div>
+        <div className="text-lg font-bold">{Number(value).toLocaleString('en-US')}</div>
       )}
     </div>
   );
@@ -151,7 +151,7 @@ function StageCard({ stage, planId, canEdit, onChangeStatus, onRefresh, onErr }:
             <tr key={tr.id} className="border-t border-slate-100 dark:border-slate-700">
               <td className="py-2">{tr.description || tr.catalog_name}{tr.tooth_number ? ` (دندان ${tr.tooth_number})` : ""}</td>
               <td className="py-2 text-slate-400">×{tr.quantity}</td>
-              <td className="py-2">{Number(tr.total).toLocaleString()}</td>
+              <td className="py-2">{Number(tr.total).toLocaleString('en-US')}</td>
               <td className="py-2 text-end">
                 {canEdit ? (
                   <select className="input w-auto py-1" value={tr.status} onChange={(e) => onChangeStatus(tr.id, e.target.value)}>
@@ -172,7 +172,7 @@ function StageCard({ stage, planId, canEdit, onChangeStatus, onRefresh, onErr }:
             <label className="label">پروسیجر (از فهرست)</label>
             <ResourceCombo resource="treatment-catalog" value={tForm.catalog_item}
               onChange={(id, row) => setTForm({ ...tForm, catalog_item: id, description: row?.name ?? tForm.description, unit_price: row ? String(row.default_price) : tForm.unit_price })}
-              getLabel={(r) => `${r.name} (${Number(r.default_price).toLocaleString()})`} placeholder="انتخاب پروسیجر…" />
+              getLabel={(r) => `${r.name} (${Number(r.default_price).toLocaleString('en-US')})`} placeholder="انتخاب پروسیجر…" />
           </div>
           <div><label className="label">تعداد</label><input type="number" min={1} className="input" value={tForm.quantity} onChange={(e) => setTForm({ ...tForm, quantity: Number(e.target.value) })} /></div>
           <div><label className="label">قیمت واحد</label><input className="input" value={tForm.unit_price} onChange={(e) => setTForm({ ...tForm, unit_price: e.target.value })} /></div>

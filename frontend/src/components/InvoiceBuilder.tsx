@@ -75,7 +75,7 @@ export default function InvoiceBuilder({ initial }: { initial?: any }) {
                 <td className="px-3 py-2"><input className="input" value={it.description} onChange={(e) => setItem(idx, { description: e.target.value })} placeholder="تداوی / قلم" /></td>
                 <td className="px-3 py-2 w-20"><input type="number" min={1} className="input" value={it.quantity} onChange={(e) => setItem(idx, { quantity: Number(e.target.value) })} /></td>
                 <td className="px-3 py-2 w-32"><input className="input" value={it.unit_price} onChange={(e) => setItem(idx, { unit_price: e.target.value })} /></td>
-                <td className="px-3 py-2 w-28">{(it.quantity * num(it.unit_price)).toLocaleString()}</td>
+                <td className="px-3 py-2 w-28">{(it.quantity * num(it.unit_price)).toLocaleString('en-US')}</td>
                 <td className="px-3 py-2"><button type="button" className="text-red-500" onClick={() => setItems(items.filter((_, i) => i !== idx))}>✕</button></td>
               </tr>
             ))}
@@ -91,11 +91,11 @@ export default function InvoiceBuilder({ initial }: { initial?: any }) {
           <div><label className="label">یادداشت‌ها</label><input className="input" value={notes} onChange={(e) => setNotes(e.target.value)} /></div>
         </div>
         <div className="card space-y-2">
-          <Row label="جمع جزء" value={subtotal.toLocaleString()} />
+          <Row label="جمع جزء" value={subtotal.toLocaleString('en-US')} />
           <div className="flex items-center justify-between"><span>تخفیف</span><input className="input w-32 py-1 text-end" value={discount} onChange={(e) => setDiscount(e.target.value)} /></div>
           <div className="flex items-center justify-between"><span>مالیات</span><input className="input w-32 py-1 text-end" value={tax} onChange={(e) => setTax(e.target.value)} /></div>
           <hr className="border-slate-200 dark:border-slate-700" />
-          <Row label="مجموع کل" value={total.toLocaleString()} bold />
+          <Row label="مجموع کل" value={total.toLocaleString('en-US')} bold />
         </div>
       </div>
 

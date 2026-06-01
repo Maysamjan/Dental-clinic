@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/stores/auth";
 import Sidebar from "@/components/Sidebar";
@@ -8,14 +8,16 @@ import Topbar from "@/components/Topbar";
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const access = useAuth((s) => s.access);
-  const [ready, setReady] = useState(false);
+  const hasHydrated = useAuth((s) => s.hasHydrated);
 
   useEffect(() => {
-    if (!access) router.replace("/login");
-    else setReady(true);
-  }, [access, router]);
+    // Only decide after the persisted store has rehydrated, so a hard refresh
+    // of a protected page doesn't bounce a logged-in user to /login.
+    if (hasHydrated && !access) router.replace("/login");
+  }, [hasHydrated, access, router]);
 
-  if (!ready) return null;
+  if (!hasHydrated) return null;
+  if (!access) return null;
 
   return (
     <div className="flex h-screen overflow-hidden">

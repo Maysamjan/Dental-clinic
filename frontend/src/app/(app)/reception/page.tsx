@@ -132,7 +132,7 @@ export default function ReceptionPage() {
               {appts.length === 0 && <tr><td colSpan={5} className="p-6 text-center text-slate-400">امروز نوبتی ثبت نشده است.</td></tr>}
               {appts.map((a) => (
                 <tr key={a.id} className="border-t border-slate-100 dark:border-slate-700">
-                  <td className="px-4 py-2">{new Date(a.start).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
+                  <td className="px-4 py-2">{new Date(a.start).toLocaleTimeString('en-US', { hour: "2-digit", minute: "2-digit" })}</td>
                   <td className="px-4 py-2">{a.patient_name}</td>
                   <td className="px-4 py-2">{a.doctor_name || "—"}</td>
                   <td className="px-4 py-2"><span className={`badge ${STATUS_COLOR[a.status] || "bg-slate-100 text-slate-700"}`}>{APPT_STATUS_FA[a.status] ?? a.status}</span></td>

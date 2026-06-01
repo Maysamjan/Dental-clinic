@@ -15,7 +15,7 @@ export default function DocumentsPage() {
         columns={[
           { key: "title", label: "عنوان" },
           { key: "type", label: "نوع", render: (r) => DOC_TYPE_FA[r.type] ?? r.type },
-          { key: "created_at", label: "تاریخ بارگذاری", render: (r) => new Date(r.created_at).toLocaleDateString() },
+          { key: "created_at", label: "تاریخ بارگذاری", render: (r) => new Date(r.created_at).toLocaleDateString('en-US') },
           {
             key: "file_url",
             label: "",

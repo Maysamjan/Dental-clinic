@@ -163,7 +163,7 @@ export default function ConsultationPage() {
             ) : (
               <ul className="text-sm">
                 {rowsOf<any>(rxData).map((r) => (
-                  <li key={r.id} className="py-1">#{r.id} · {new Date(r.created_at).toLocaleDateString()}</li>
+                  <li key={r.id} className="py-1">#{r.id} · {new Date(r.created_at).toLocaleDateString('en-US')}</li>
                 ))}
               </ul>
             )}

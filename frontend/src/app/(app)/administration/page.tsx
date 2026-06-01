@@ -65,7 +65,7 @@ export default function AdministrationPage() {
           columns={[
             { key: "username", label: "کاربر" },
             { key: "ip_address", label: "آی‌پی" },
-            { key: "login_at", label: "ورود", render: (r) => new Date(r.login_at).toLocaleString() },
+            { key: "login_at", label: "ورود", render: (r) => new Date(r.login_at).toLocaleString('en-US') },
             { key: "is_active", label: "فعال", render: (r) => (r.is_active ? "بله" : "خیر") },
           ]}
         />
@@ -77,7 +77,7 @@ export default function AdministrationPage() {
             { key: "username", label: "کاربر" },
             { key: "action", label: "عملیات", render: (r) => ACTION_FA[r.action] ?? r.action },
             { key: "summary", label: "شرح" },
-            { key: "created_at", label: "زمان", render: (r) => new Date(r.created_at).toLocaleString() },
+            { key: "created_at", label: "زمان", render: (r) => new Date(r.created_at).toLocaleString('en-US') },
           ]}
         />
       )}

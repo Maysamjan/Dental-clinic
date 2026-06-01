@@ -56,7 +56,7 @@ export default function PrescriptionsPage() {
           { key: "id", label: "#" },
           { key: "patient_name", label: "بیمار" },
           { key: "doctor_name", label: "داکتر" },
-          { key: "created_at", label: "تاریخ", render: (r) => new Date(r.created_at).toLocaleDateString() },
+          { key: "created_at", label: "تاریخ", render: (r) => new Date(r.created_at).toLocaleDateString('en-US') },
           { key: "pdf", label: "", render: (r) => <a className="text-brand-600 hover:underline" href={`${API_URL}/prescriptions/${r.id}/pdf/`} target="_blank" rel="noreferrer">PDF ↗</a> },
         ]}
       />

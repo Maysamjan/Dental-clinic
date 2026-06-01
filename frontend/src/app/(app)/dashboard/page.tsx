@@ -41,13 +41,13 @@ export default function DashboardPage() {
         <Stat label={t("todays_appointments")} value={data?.todays_appointments ?? "—"} />
         <Stat
           label={t("todays_revenue")}
-          value={data ? Number(data.todays_revenue).toLocaleString() : "—"}
+          value={data ? Number(data.todays_revenue).toLocaleString('en-US') : "—"}
           accent="text-brand-600"
         />
         <Stat label={t("outstanding_invoices")} value={data?.outstanding_invoices ?? "—"} />
         <Stat
           label={t("outstanding_balance")}
-          value={data ? Number(data.outstanding_balance).toLocaleString() : "—"}
+          value={data ? Number(data.outstanding_balance).toLocaleString('en-US') : "—"}
           accent="text-amber-600"
         />
         <Stat label={t("upcoming_followups")} value={data?.upcoming_followups ?? "—"} />
@@ -70,7 +70,7 @@ export default function DashboardPage() {
                 {a.summary}
               </span>
               <span className="text-slate-400">
-                {new Date(a.created_at).toLocaleString()}
+                {new Date(a.created_at).toLocaleString('en-US')}
               </span>
             </li>
           ))}

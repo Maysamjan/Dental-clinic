@@ -14,7 +14,7 @@ export default function ExpensesPage() {
           { key: "date", label: "تاریخ" },
           { key: "category_name", label: "دسته‌بندی" },
           { key: "description", label: "شرح" },
-          { key: "amount", label: "مبلغ", render: (r) => Number(r.amount).toLocaleString() },
+          { key: "amount", label: "مبلغ", render: (r) => Number(r.amount).toLocaleString('en-US') },
         ]}
       />
     </div>

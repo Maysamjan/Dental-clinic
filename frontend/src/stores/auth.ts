@@ -9,6 +9,8 @@ interface AuthState {
   access: string | null;
   refresh: string | null;
   user: User | null;
+  hasHydrated: boolean;
+  setHasHydrated: (v: boolean) => void;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   refreshToken: () => Promise<string | null>;
@@ -20,6 +22,8 @@ export const useAuth = create<AuthState>()(
       access: null,
       refresh: null,
       user: null,
+      hasHydrated: false,
+      setHasHydrated: (v) => set({ hasHydrated: v }),
 
       login: async (username, password) => {
         const { data } = await axios.post(`${API_URL}/auth/login/`, {
@@ -56,6 +60,9 @@ export const useAuth = create<AuthState>()(
         }
       },
     }),
-    { name: "dental-auth" }
+    {
+      name: "dental-auth",
+      onRehydrateStorage: () => (state) => state?.setHasHydrated(true),
+    }
   )
 );

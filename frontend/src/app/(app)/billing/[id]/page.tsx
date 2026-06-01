@@ -43,7 +43,7 @@ export default function InvoiceDetailPage() {
     qc.invalidateQueries({ queryKey: ["installment-plans", { invoice: id }] });
   };
 
-  const fmt = (n: any) => Number(n || 0).toLocaleString();
+  const fmt = (n: any) => Number(n || 0).toLocaleString('en-US');
 
   if (!inv) return <div className="text-slate-400">در حال بارگذاری…</div>;
   if (editing) {
@@ -101,7 +101,7 @@ export default function InvoiceDetailPage() {
                 {payments.length === 0 && <tr><td className="p-4 text-slate-400">هنوز پرداختی ثبت نشده است.</td></tr>}
                 {payments.map((p) => (
                   <tr key={p.id} className="border-t border-slate-100 dark:border-slate-700">
-                    <td className="px-4 py-2">{new Date(p.paid_at).toLocaleString()}</td>
+                    <td className="px-4 py-2">{new Date(p.paid_at).toLocaleString('en-US')}</td>
                     <td className="px-4 py-2">{PAYMENT_METHOD_FA[p.method] ?? p.method}</td>
                     <td className="px-4 py-2">{fmt(p.amount)}</td>
                     <td className="px-4 py-2 text-end"><a className="text-brand-600 hover:underline" href={`${API_URL}/payments/${p.id}/receipt/`} target="_blank" rel="noreferrer">رسید ↗</a></td>
@@ -196,7 +196,7 @@ function InstallmentPanel({ invoice, plan, canInstall, canPay, refresh, toast }:
           {plan.installments.map((ins: any) => (
             <tr key={ins.id} className="border-t border-slate-100 dark:border-slate-700">
               <td className="px-4 py-2">{ins.due_date}</td>
-              <td className="px-4 py-2">{Number(ins.amount).toLocaleString()}</td>
+              <td className="px-4 py-2">{Number(ins.amount).toLocaleString('en-US')}</td>
               <td className="px-4 py-2"><span className="badge bg-slate-100 text-slate-700">{ins.status}</span></td>
               <td className="px-4 py-2 text-end">
                 {canPay && ins.status !== "PAID" && (

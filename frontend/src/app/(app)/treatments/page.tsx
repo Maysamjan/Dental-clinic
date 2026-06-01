@@ -66,7 +66,7 @@ export default function TreatmentsPage() {
                     <span className="text-xs">{p.progress_percent}%</span>
                   </div>
                 </td>
-                <td className="px-4 py-2">{Number(p.estimated_cost).toLocaleString()}</td>
+                <td className="px-4 py-2">{Number(p.estimated_cost).toLocaleString('en-US')}</td>
                 <td className="px-4 py-2"><Link className="text-brand-600 hover:underline" href={`/treatments/${p.id}`}>باز کردن →</Link></td>
               </tr>
             ))}

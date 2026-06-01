@@ -29,7 +29,7 @@ export default function PatientProfilePage() {
   });
   const p = data?.patient;
   const fin = data?.financial_summary;
-  const fmt = (n: any) => Number(n || 0).toLocaleString();
+  const fmt = (n: any) => Number(n || 0).toLocaleString('en-US');
 
   const clinicalCount = (data?.visits?.length ?? 0) + (data?.treatment_plans?.length ?? 0) + (data?.prescriptions?.length ?? 0);
   const filesCount = (data?.documents?.length ?? 0) + (data?.follow_ups?.length ?? 0);

@@ -114,7 +114,7 @@ export default function AppointmentsPage() {
             )}
             {rows.map((a) => (
               <tr key={a.id} className="border-t border-slate-100 dark:border-slate-700">
-                <td className="px-4 py-2">{new Date(a.start).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
+                <td className="px-4 py-2">{new Date(a.start).toLocaleTimeString('en-US', { hour: "2-digit", minute: "2-digit" })}</td>
                 <td className="px-4 py-2">{a.patient_name}</td>
                 <td className="px-4 py-2">{a.doctor_name || "—"}</td>
                 <td className="px-4 py-2">{a.reason || "—"}</td>

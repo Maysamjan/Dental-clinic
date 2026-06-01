@@ -31,9 +31,9 @@ export default function BillingPage() {
         columns={[
           { key: "number", label: "صورتحساب", render: (r) => <Link className="text-brand-600 hover:underline" href={`/billing/${r.id}`}>{r.number}</Link> },
           { key: "patient_name", label: "بیمار" },
-          { key: "total", label: "مجموع", render: (r) => Number(r.total).toLocaleString() },
-          { key: "paid_amount", label: "پرداختی", render: (r) => Number(r.paid_amount).toLocaleString() },
-          { key: "balance", label: "باقی‌مانده", render: (r) => Number(r.balance).toLocaleString() },
+          { key: "total", label: "مجموع", render: (r) => Number(r.total).toLocaleString('en-US') },
+          { key: "paid_amount", label: "پرداختی", render: (r) => Number(r.paid_amount).toLocaleString('en-US') },
+          { key: "balance", label: "باقی‌مانده", render: (r) => Number(r.balance).toLocaleString('en-US') },
           { key: "status", label: "وضعیت", render: (r) => <span className={`badge ${STATUS[r.status]}`}>{INVOICE_STATUS_FA[r.status] ?? r.status}</span> },
           { key: "pdf", label: "", render: (r) => <a className="text-brand-600 hover:underline" href={`${API_URL}/invoices/${r.id}/pdf/`} target="_blank" rel="noreferrer">PDF ↗</a> },
         ]}
