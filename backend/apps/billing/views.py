@@ -60,7 +60,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 class PaymentViewSet(viewsets.ModelViewSet):
     module = "payments"
     permission_classes = [HasModulePermission]
-    queryset = Payment.objects.select_related("invoice", "invoice__patient")
+    queryset = Payment.objects.select_related("invoice", "invoice__patient", "received_by")
     serializer_class = PaymentSerializer
     filterset_fields = ["invoice", "method", "installment"]
     ordering_fields = ["paid_at", "amount"]
@@ -69,6 +69,33 @@ class PaymentViewSet(viewsets.ModelViewSet):
         serializer.save(
             received_by=self.request.user if self.request.user.is_authenticated else None
         )
+
+    @action(detail=True, methods=["get"], url_path="receipt")
+    def receipt(self, request, pk=None):
+        payment = self.get_object()
+        inv = payment.invoice
+        intro = [
+            f"<b>Receipt for:</b> {inv.number}",
+            f"<b>Patient:</b> {inv.patient.full_name} ({inv.patient.code})",
+            f"<b>Date:</b> {payment.paid_at:%Y-%m-%d %H:%M}",
+            f"<b>Received by:</b> {payment.received_by.full_name if payment.received_by else '-'}",
+        ]
+        rows = [[
+            payment.get_method_display(),
+            payment.reference or "-",
+            f"{payment.amount}",
+        ]]
+        footer = (
+            f"Invoice total: {inv.total} &nbsp;&nbsp; Paid to date: {inv.paid_amount} "
+            f"&nbsp;&nbsp; <b>Balance: {inv.balance}</b>"
+        )
+        pdf = build_pdf(
+            "Payment Receipt", intro,
+            ["Method", "Reference", "Amount"], rows, footer,
+        )
+        resp = HttpResponse(pdf, content_type="application/pdf")
+        resp["Content-Disposition"] = f'inline; filename="receipt-{payment.id}.pdf"'
+        return resp
 
 
 class InstallmentPlanViewSet(viewsets.ModelViewSet):

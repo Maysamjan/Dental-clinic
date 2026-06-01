@@ -67,6 +67,25 @@ class PaymentSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["received_by"]
 
+    def validate_amount(self, value):
+        if value is None or value <= 0:
+            raise serializers.ValidationError("Amount must be greater than zero.")
+        return value
+
+    def validate(self, attrs):
+        amount = attrs.get("amount", getattr(self.instance, "amount", None))
+        invoice = attrs.get("invoice", getattr(self.instance, "invoice", None))
+        if invoice and amount:
+            # Remaining balance, adding back this payment's old amount when editing.
+            remaining = invoice.balance
+            if self.instance is not None:
+                remaining += self.instance.amount
+            if amount > remaining:
+                raise serializers.ValidationError(
+                    {"amount": f"Payment exceeds the remaining balance ({remaining})."}
+                )
+        return attrs
+
 
 class InstallmentSerializer(serializers.ModelSerializer):
     class Meta:
