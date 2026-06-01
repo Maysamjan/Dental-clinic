@@ -7,11 +7,11 @@ import { api, API_URL } from "@/lib/api";
 import { useAuth } from "@/stores/auth";
 import { hasPerm } from "@/lib/permissions";
 import { useToast, apiError } from "@/stores/toast";
-import { GENDER_FA } from "@/lib/labels";
+import { GENDER_FA, DOC_TYPE_FA } from "@/lib/labels";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 
-type Tab = "overview" | "visits" | "treatments" | "prescriptions" | "billing" | "documents" | "followups";
+type Tab = "overview" | "clinical" | "billing" | "files";
 
 export default function PatientProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -31,14 +31,13 @@ export default function PatientProfilePage() {
   const fin = data?.financial_summary;
   const fmt = (n: any) => Number(n || 0).toLocaleString();
 
+  const clinicalCount = (data?.visits?.length ?? 0) + (data?.treatment_plans?.length ?? 0) + (data?.prescriptions?.length ?? 0);
+  const filesCount = (data?.documents?.length ?? 0) + (data?.follow_ups?.length ?? 0);
   const tabs: [Tab, string, number][] = [
-    ["overview", "نمای کلی", 0],
-    ["visits", "ویزیت‌ها", data?.visits?.length ?? 0],
-    ["treatments", "تداوی‌ها", data?.treatment_plans?.length ?? 0],
-    ["prescriptions", "نسخه‌ها", data?.prescriptions?.length ?? 0],
-    ["billing", "صورتحساب", data?.invoices?.length ?? 0],
-    ["documents", "اسناد", data?.documents?.length ?? 0],
-    ["followups", "پیگیری‌ها", data?.follow_ups?.length ?? 0],
+    ["overview", "خلاصه", 0],
+    ["clinical", "بالینی", clinicalCount],
+    ["billing", "مالی", data?.invoices?.length ?? 0],
+    ["files", "اسناد و پیگیری", filesCount],
   ];
 
   return (
@@ -89,16 +88,15 @@ export default function PatientProfilePage() {
         </div>
       )}
 
-      {tab === "visits" && (
-        <Table rows={data?.visits} cols={[["visit_date", "تاریخ"], ["doctor_name", "داکتر"], ["diagnosis", "تشخیص"], ["workflow_status", "وضعیت"]]}
-          link={(r) => `/visits/${r.id}`} />
-      )}
-      {tab === "treatments" && (
-        <Table rows={data?.treatment_plans} cols={[["title", "پلان"], ["status", "وضعیت"], ["progress_percent", "پیشرفت ٪"]]} />
-      )}
-      {tab === "prescriptions" && (
-        <Table rows={data?.prescriptions} cols={[["id", "#"], ["doctor_name", "داکتر"], ["created_at", "تاریخ"]]}
-          extra={(r) => <a className="text-brand-600 hover:underline" href={`${API_URL}/prescriptions/${r.id}/pdf/`} target="_blank" rel="noreferrer">PDF ↗</a>} />
+      {tab === "clinical" && (
+        <div className="space-y-4">
+          <Table title="ویزیت‌ها" rows={data?.visits} cols={[["visit_date", "تاریخ"], ["doctor_name", "داکتر"], ["diagnosis", "تشخیص"], ["workflow_status", "وضعیت"]]}
+            link={(r) => `/visits/${r.id}`} />
+          <Table title="پلان‌های تداوی" rows={data?.treatment_plans} cols={[["title", "پلان"], ["status", "وضعیت"], ["progress_percent", "پیشرفت ٪"]]}
+            link={(r) => `/treatments/${r.id}`} />
+          <Table title="نسخه‌ها" rows={data?.prescriptions} cols={[["id", "#"], ["doctor_name", "داکتر"], ["created_at", "تاریخ"]]}
+            extra={(r) => <a className="text-brand-600 hover:underline" href={`${API_URL}/prescriptions/${r.id}/pdf/`} target="_blank" rel="noreferrer">PDF ↗</a>} />
+        </div>
       )}
       {tab === "billing" && (
         <div className="space-y-4">
@@ -107,20 +105,23 @@ export default function PatientProfilePage() {
           <Table title="پرداخت‌ها" rows={data?.payments} cols={[["invoice_number", "صورتحساب"], ["amount", "مبلغ"], ["method", "روش"], ["paid_at", "تاریخ"]]} />
         </div>
       )}
-      {tab === "documents" && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {(data?.documents ?? []).length === 0 && <div className="card text-slate-400">سندی موجود نیست.</div>}
-          {(data?.documents ?? []).map((d: any) => (
-            <a key={d.id} href={d.file_url} target="_blank" rel="noreferrer" className="card hover:ring-2 hover:ring-brand-300">
-              <div className="text-3xl">{d.type === "XRAY" || d.type === "OPG" || d.type === "PHOTO" ? "🖼️" : "📄"}</div>
-              <div className="mt-1 truncate text-sm font-medium">{d.title || d.type}</div>
-              <div className="text-xs text-slate-400">{d.type}</div>
-            </a>
-          ))}
+      {tab === "files" && (
+        <div className="space-y-4">
+          <div>
+            <h2 className="mb-2 font-semibold">اسناد و تصاویر</h2>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              {(data?.documents ?? []).length === 0 && <div className="card text-slate-400">سندی موجود نیست.</div>}
+              {(data?.documents ?? []).map((d: any) => (
+                <a key={d.id} href={d.file_url} target="_blank" rel="noreferrer" className="card hover:ring-2 hover:ring-brand-300">
+                  <div className="text-3xl">{d.type === "XRAY" || d.type === "OPG" || d.type === "PHOTO" ? "🖼️" : "📄"}</div>
+                  <div className="mt-1 truncate text-sm font-medium">{d.title || (DOC_TYPE_FA[d.type] ?? d.type)}</div>
+                  <div className="text-xs text-slate-400">{DOC_TYPE_FA[d.type] ?? d.type}</div>
+                </a>
+              ))}
+            </div>
+          </div>
+          <Table title="پیگیری‌ها" rows={data?.follow_ups} cols={[["due_date", "موعد"], ["type", "نوع"], ["note", "یادداشت"], ["status", "وضعیت"]]} />
         </div>
-      )}
-      {tab === "followups" && (
-        <Table rows={data?.follow_ups} cols={[["due_date", "موعد"], ["type", "نوع"], ["note", "یادداشت"], ["status", "وضعیت"]]} />
       )}
 
       {p && (

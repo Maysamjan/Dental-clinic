@@ -14,16 +14,18 @@ body {
 
 body {
   @apply bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100;
-  font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  font-family: Vazirmatn, system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.7;
 }
 
 /* Reusable component classes */
 .card {
-  @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm
+  @apply rounded-xl border border-slate-200 bg-white p-5 shadow-sm
          dark:border-slate-700 dark:bg-slate-800;
 }
 .btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5
          text-sm font-medium transition disabled:opacity-50;
 }
 .btn-primary {
