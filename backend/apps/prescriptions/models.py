@@ -23,6 +23,20 @@ class Prescription(TimeStampedModel):
         return f"Prescription #{self.id} - {self.patient.full_name}"
 
 
+class PrescriptionTemplate(TimeStampedModel):
+    """Reusable set of medications a doctor can apply to a new prescription."""
+
+    name = models.CharField(max_length=120)
+    description = models.CharField(max_length=255, blank=True)
+    items = models.JSONField(default=list, blank=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class PrescriptionItem(models.Model):
     prescription = models.ForeignKey(
         Prescription, on_delete=models.CASCADE, related_name="items"

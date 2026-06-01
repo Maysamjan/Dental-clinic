@@ -48,6 +48,7 @@ class Doctor(TimeStampedModel):
     specialization = models.CharField(max_length=120, blank=True)
     license_number = models.CharField(max_length=60, blank=True)
     working_hours = models.JSONField(default=dict, blank=True)
+    signature = models.ImageField(upload_to="doctors/signatures/", null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

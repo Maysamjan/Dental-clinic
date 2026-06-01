@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from .models import Prescription, PrescriptionItem
+from .models import Prescription, PrescriptionItem, PrescriptionTemplate
+
+
+class PrescriptionTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrescriptionTemplate
+        fields = ["id", "name", "description", "items"]
 
 
 class PrescriptionItemSerializer(serializers.ModelSerializer):
