@@ -9,6 +9,11 @@ from apps.accounts.models import Doctor
 from apps.appointments.models import Appointment
 
 
+def current_time():
+    """Return the current local time (callable default for TimeField)."""
+    return timezone.localtime().time()
+
+
 class Visit(TimeStampedModel):
     """A clinical encounter. Also drives the live reception/doctor queue."""
 
@@ -29,7 +34,7 @@ class Visit(TimeStampedModel):
     )
 
     visit_date = models.DateField(default=date.today)
-    visit_time = models.TimeField(default=timezone.localtime)
+    visit_time = models.TimeField(default=current_time)
 
     chief_complaint = models.TextField(blank=True)
     clinical_findings = models.TextField(blank=True)
