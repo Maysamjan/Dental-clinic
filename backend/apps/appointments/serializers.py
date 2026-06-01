@@ -11,7 +11,7 @@ def clinic_appointment_duration():
     try:
         from apps.dashboard.models import ClinicInfo
 
-        return int(ClinicInfo.load().settings.get("appointment_duration_minutes", 30))
+        return int(ClinicInfo.load().appointment_duration_minutes or 30)
     except Exception:
         return 30
 

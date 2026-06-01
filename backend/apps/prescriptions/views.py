@@ -58,7 +58,7 @@ class PrescriptionViewSet(viewsets.ModelViewSet):
 
         try:
             from apps.dashboard.models import ClinicInfo
-            footer = ClinicInfo.load().settings.get("prescription_footer", "")
+            footer = ClinicInfo.load().prescription_footer or ""
         except Exception:
             footer = ""
         if rx.notes:
